@@ -1,38 +1,211 @@
-.App {
+/* --- БАЗОВЫЕ НАСТРОЙКИ В СТИЛЕ TELEGRAM NIGHT MODE --- */
+body {
+  margin: 0;
+  background-color: #17212b; /* Родной фон темной темы ТГ */
+  color: #f5f5f5; /* Мягкий белый цвет текста */
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  padding-bottom: 90px;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.game-container {
+  max-width: 450px;
+  margin: 0 auto;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+/* --- ВЕРХНЯЯ ПАНЕЛЬ С СТАТУСАМИ --- */
+.main-stats {
+  background-color: #1e2b38; /* Фон блоков в ТГ */
+  padding: 16px;
+  border-radius: 12px; /* В ТГ закругления чуть более строгие, 12px в самый раз */
+  margin-bottom: 20px;
+  position: sticky;
+  top: 12px;
+  z-index: 100;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  border: 1px solid #243444;
+}
+
+.main-stats h2 {
+  margin: 0 0 12px 0;
   text-align: center;
+  color: #2481cc; /* Фирменный синий цвет Telegram */
+  font-size: 20px;
+  font-weight: 600;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.stats-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.stat-item {
+  font-size: 15px;
+  font-weight: 600;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+/* Прогресс-бар энергии в цветах Telegram */
+.energy-bar-container {
+  width: 100%;
+  height: 6px;
+  background-color: #17212b;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-top: 4px;
+}
+
+.energy-bar-fill {
+  height: 100%;
+  background: #2481cc; /* Синий индикатор */
+  box-shadow: 0 0 6px rgba(36, 129, 204, 0.5);
+  transition: width 0.2s ease;
+}
+
+.debt-warning {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ff595a;
+  text-align: center;
+  margin-top: 12px;
+  padding: 8px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* --- ЗАГОЛОВКИ БЛОКОВ --- */
+h3 {
+  margin: 24px 0 10px 4px;
+  color: #708499; /* Фирменный служебный текст ТГ */
+  font-size: 13px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* --- КНОПКИ И КАРТОЧКИ --- */
+.btn {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 10px;
+  background-color: #2481cc; /* Основные кнопки — синие */
+  color: #ffffff;
+  transition: background-color 0.15s ease, transform 0.05s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn:active {
+  transform: scale(0.98);
+  background-color: #1b66a4; /* Затемнение при клике */
+}
+
+/* Второстепенные или обычные серые кнопки */
+button.btn:not(.buy-btn):not(.danger-btn) {
+  background-color: #202b36;
+  border: 1px solid #2b3946;
+  color: #f5f5f5;
+}
+button.btn:not(.buy-btn):not(.danger-btn):active {
+  background-color: #17212b;
+}
+
+/* Зеленые кнопки (покупка/успех) */
+.buy-btn {
+  background-color: #4cb64c !important; /* Нативный ТГ-зеленый */
+}
+.buy-btn:active {
+  background-color: #3e963e !important;
+}
+
+/* Красные кнопки (опасность/долг) */
+.danger-btn {
+  background-color: #e53935 !important;
+}
+.danger-btn:active {
+  background-color: #b71c1c !important;
+}
+
+/* --- ИНФОРМАЦИОННЫЕ БЛОКИ (ИНВЕНТАРЬ) --- */
+.info-box {
+  background-color: #1e2b38;
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 1px solid #243444;
+  margin-bottom: 12px;
+}
+
+.info-box p {
+  margin: 6px 0;
+  font-size: 15px;
+  display: flex;
+  justify-content: space-between;
+  color: #e5e5e5;
+}
+
+.info-box p strong {
+  color: #64b5f6; /* Мягкий синий акцент на значениях */
+}
+
+/* --- НИЖНЕЕ МЕНЮ НАВИГАЦИИ (ТГ СТИЛЬ) --- */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 450px;
+  background-color: #1e2b38;
+  display: flex;
+  justify-content: space-around;
+  padding: 8px 0 calc(8px + env(safe-area-inset-bottom, 0px)) 0;
+  border-top: 1px solid #243444;
+  z-index: 1000;
+  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.nav-btn {
+  background: none;
+  border: none;
+  color: #708499; /* Неактивные вкладки */
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  gap: 4px;
+  width: 25%;
+  transition: color 0.15s ease;
 }
 
-.App-link {
-  color: #61dafb;
+.nav-btn::before {
+  font-size: 18px;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.nav-btn:nth-child(1)::before { content: "🧍"; }
+.nav-btn:nth-child(2)::before { content: "🏢"; }
+.nav-btn:nth-child(3)::before { content: "🏦"; }
+
+.nav-btn.active {
+  color: #2481cc; /* Активная вкладка горит фирменным синим */
+}
+/* Стили для адаптации Cloudflare Twemoji под размер текста */
+img.twemoji {
+  height: 1em;
+  width: 1em;
+  margin: 0 0.1em 0.1em 0.1em;
+  vertical-align: -0.1em;
+  display: inline-block;
 }
