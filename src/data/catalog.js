@@ -45,6 +45,8 @@ export const educationCatalog = [
 export const jobsCatalog = [
   { id: 'promoter', name: 'Промоутер у метро 🫱📄', salary: 150, energyCost: 10, reqStatus: 10, reqLicense: null },
   { id: 'courier', name: 'Курьер на самокате 🚴', salary: 450, energyCost: 15, reqStatus: 40, reqLicense: null },
+  { id: 'welder', name: 'Электросварщик 3-го разряда 👨‍🏭', salary: 1800, energyCost: 25, reqStatus: 80, reqLicense: 'Диплом Механика-Сварщика' },
+  { id: 'mechanic', name: 'Автомеханик в СТО 🔧', salary: 2500, energyCost: 25, reqStatus: 100, reqLicense: 'Диплом Механика-Сварщика' },
   { id: 'designer', name: 'Фриланс Веб-Дизайнер 🎨', salary: 1200, energyCost: 20, reqStatus: 100, reqLicense: 'Сертификат Дизайнера' },
   { id: 'banker', name: 'Младший Экономист в банк 📊', salary: 3500, energyCost: 25, reqStatus: 300, reqLicense: 'Диплом Экономиста' },
   { id: 'director', name: 'Генеральный Директор СТО 👔', salary: 12000, energyCost: 35, reqStatus: 1500, reqLicense: 'Магистр Бизнеса' }

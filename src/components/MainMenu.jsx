@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 
-export function ShopMenu({ setMenuState }) {
+export function ShopMenu({ setMenuState, shareProgress }) {
   return (
     <div className="menu-screen">
       <h3>Магазины</h3>
@@ -9,11 +9,12 @@ export function ShopMenu({ setMenuState }) {
       <button className="btn" onClick={() => setMenuState('shop_houses')}>🏠 Недвижимость</button>
       <button className="btn" onClick={() => setMenuState('shop_biz')}>🚀 Стартапы</button>
       <button className="btn" onClick={() => setMenuState('main')}>↩️ В главное меню</button>
+      {/* Кнопку "Поделиться" можно добавить и сюда, если нужно */}
     </div>
   );
 }
 
-export function MainMenu({ setMenuState }) {
+export function MainMenu({ setMenuState, shareProgress }) {
   return (
     <div className="menu-screen">
       <h3>Главное меню</h3>
@@ -24,8 +25,12 @@ export function MainMenu({ setMenuState }) {
       <button className="btn" onClick={() => setMenuState('buyout')}>🤝 Выкуп бизнеса</button>
       <button className="btn" onClick={() => setMenuState('exchange')}>💱 Обмен валюты</button>
       <button className="btn" onClick={() => setMenuState('bank')}>🏦 Банк и Кредиты</button>
-      {/* НАША НОВАЯ КНОПКА */}
       <button className="btn" style={{ background: '#a855f7' }} onClick={() => setMenuState('entertainment')}>🎰 Развлечения</button>
+      
+      {/* Кнопка "Поделиться" теперь использует функцию из пропсов */}
+      <button className="btn" style={{ background: '#3b82f6', marginTop: '10px' }} onClick={shareProgress}>
+        📊 Поделиться прогрессом
+      </button>
     </div>
   );
 }

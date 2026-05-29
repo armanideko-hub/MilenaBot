@@ -9,15 +9,15 @@ import { backstories } from '../data/backstory';
 export function ProfileScreen({ player, totalStatus, onBack, setPlayer }) {
   const [isBagOpen, setIsBagOpen] = useState(false);
 
-  const items = player.inventory.items || [];
-  const maxSlots = player.inventory.maxSlots || 8;
+  const items = player.inventory?.items || [];
+  const maxSlots = player.inventory?.maxSlots || 8;
 
   // Создаем фиксированную сетку ячеек
   const slots = Array.from({ length: maxSlots }, (_, index) => items[index] || null);
 
   // Покупка рюкзака на 16 слотов
   const upgradeBag = () => {
-    if (player.balances.RUB < 5000) {
+    if ((player.balances?.RUB || 0) < 5000) {
       alert('⚠️ Не хватает денег! Спортивный рюкзак стоит 5,000₽');
       return;
     }
@@ -40,8 +40,8 @@ export function ProfileScreen({ player, totalStatus, onBack, setPlayer }) {
         
         <div className="info-box" style={{ marginBottom: '15px', padding: '12px', textAlign: 'left' }}>
           <p style={{ margin: '4px 0' }}>Уровень солидности: <strong style={{ color: '#facc15' }}>{totalStatus} ⭐</strong></p>
-          <p style={{ margin: '4px 0' }}>Одежда: <strong>{player.inventory.clothes}</strong></p>
-          <p style={{ margin: '4px 0' }}>Транспорт: <strong>{player.inventory.transport}</strong></p>
+          <p style={{ margin: '4px 0' }}>Одежда: <strong>{player.inventory?.clothes || 'Нет'}</strong></p>
+          <p style={{ margin: '4px 0' }}>Транспорт: <strong>{player.inventory?.transport || 'Нет'}</strong></p>
         </div>
 
         <button 
@@ -49,7 +49,7 @@ export function ProfileScreen({ player, totalStatus, onBack, setPlayer }) {
           style={{ background: isBagOpen ? '#2b3946' : '#3b82f6', marginBottom: '15px', width: '100%' }}
           onClick={() => setIsBagOpen(!isBagOpen)}
         >
-          {isBagOpen ? '📂 Закрыть сумму' : '🎒 Открыть инвентарь'}
+          {isBagOpen ? '📂 Закрыть инвентарь' : '🎒 Открыть инвентарь'}
         </button>
 
         {isBagOpen && (
@@ -102,33 +102,27 @@ export function ProfileScreen({ player, totalStatus, onBack, setPlayer }) {
 }
 
 // ==========================================
-// 2. ТРЕХВКЛАДОЧНАЯ БИРЖА ТРУДА (БАНКИ/ПРО)
+// 2. ТРЕХВКЛАДОЧНАЯ БИРЖА ТРУДА (ИСПРАВЛЕННАЯ)
 // ==========================================
 export function WorkScreen({ player, totalStatus, onWork, onBack }) {
   const [activeTab, setActiveTab] = useState('internet');
   const [avitoJobs, setAvitoJobs] = useState([]);
-  const currentLicenses = player.inventory.licenses || [];
+  const currentLicenses = player.inventory?.licenses || [];
 
-  const internetJobs = [
-    { id: 'web_captcha', name: 'Разгадывание капч 🤖', salaryMin: 10, salaryMax: 50, energyCost: 5, tax: 0, desc: 'Стабильная рутина на кликах. Без налогов.' },
-    { id: 'web_likes', name: 'Лайки и отзывы в соцсетях ✍️', salaryMin: 40, salaryMax: 100, energyCost: 6, tax: 0, desc: 'Накрутка активности. Всегда одни и те же выплаты.' }
-  ];
-
-  const officialAppsJobs = [
-    { id: 'yandex_food', name: 'Яндекс.Еда: Курьер 🚴', salary: 350, energyCost: 15, tax: 0.04, reqStatus: 0, desc: 'Доставка заказов. Минус налог самозанятого 4%.' },
-    { id: 'yandex_taxi', name: 'Яндекс.Про: Такси Эконом 🚖', salary: 850, energyCost: 22, tax: 0.04, reqStatus: 30, reqLicense: 'Аттестат за 11 классов', desc: 'Перевозка пассажиров. Списывается 4% налога.' }
-  ];
+  // Распределяем работы из нашего единого глобального jobsCatalog по вкладкам
+  const internetJobs = jobsCatalog.filter(j => j.id === 'promoter' || j.id === 'designer');
+  const officialAppsJobs = jobsCatalog.filter(j => j.id === 'courier' || j.id === 'welder' || j.id === 'mechanic' || j.id === 'banker' || j.id === 'director');
 
   const generateAvitoJobs = () => {
     const pool = [
-      { name: 'Расклейка объявлений 📋', salary: 200, energyCost: 8, tax: 0, reqStatus: 0, desc: 'Быстрая расклейка по району. Чистая наличка.' },
-      { name: 'Помощь с переездом 📦', salary: 600, energyCost: 25, tax: 0, reqStatus: 10, desc: 'Разгрузка вещей. Тяжелый физический труд.' },
-      { name: 'Выгул хаски 🦮', salary: 320, energyCost: 10, tax: 0, reqStatus: 5, desc: 'Активная прогулка с собакой в парке.' },
-      { name: 'Раздача листовок у метро 📇', salary: 250, energyCost: 9, tax: 0, reqStatus: 0, desc: 'Раздача флаеров прохожим.' },
-      { name: 'Тайный покупатель 🕵️‍♂️', salary: 500, energyCost: 12, tax: 0.04, reqStatus: 15, desc: 'Проверка супермаркета. Официальный подбор.' }
+      { id: 'avito_ads', name: 'Расклейка объявлений 📋', salary: 200, energyCost: 8, tax: 0, reqStatus: 0, desc: 'Быстрая расклейка по району. Чистая наличка.' },
+      { id: 'avito_moving', name: 'Помощь с переездом 📦', salary: 600, energyCost: 25, tax: 0, reqStatus: 10, desc: 'Разгрузка вещей. Тяжелый физический труд.' },
+      { id: 'avito_husky', name: 'Выгул хаски 🦮', salary: 320, energyCost: 10, tax: 0, reqStatus: 5, desc: 'Активная прогулка с собакой в парке.' },
+      { id: 'avito_flyers', name: 'Раздача листовок у метро 📇', salary: 250, energyCost: 9, tax: 0, reqStatus: 0, desc: 'Раздача флаеров прохожим.' },
+      { id: 'avito_buyer', name: 'Тайный покупатель 🕵️‍♂️', salary: 500, energyCost: 12, tax: 0.04, reqStatus: 15, desc: 'Проверка супермаркета. Официальный подбор.' }
     ];
     const shuffled = [...pool].sort(() => 0.5 - Math.random());
-    setAvitoJobs(shuffled.slice(0, 5));
+    setAvitoJobs(shuffled.slice(0, 3)); // Выводим 3 случайных объявления
   };
 
   useEffect(() => {
@@ -136,19 +130,16 @@ export function WorkScreen({ player, totalStatus, onWork, onBack }) {
   }, []);
 
   const handleWorkClick = (job, isAvito = false, avitoIndex = null) => {
+    // Рассчитываем чистую зарплату с учетом налога для передачи в стейт
     let finalSalary = job.salary;
-    if (job.salaryMin !== undefined) {
-      finalSalary = Math.floor(Math.random() * (job.salaryMax - job.salaryMin + 1)) + job.salaryMin;
-    }
-
     if (job.tax > 0) {
       finalSalary = finalSalary - Math.round(finalSalary * job.tax);
     }
 
+    // Передаем КОРРЕКТНЫЙ объект работы для обработчика в App.js
     onWork({
-      name: job.name,
-      salary: finalSalary,
-      energyCost: job.energyCost
+      ...job,
+      salary: finalSalary // переопределяем на сумму с вычетом налога
     });
 
     if (isAvito && avitoIndex !== null) {
@@ -162,29 +153,38 @@ export function WorkScreen({ player, totalStatus, onWork, onBack }) {
     <Twemoji options={{ className: 'twemoji' }}>
       <div className="menu-screen" style={{ maxWidth: '500px', margin: '0 auto' }}>
         <h3>Поиск подработки 💼</h3>
+        <p style={{ fontSize: '13px', color: '#eab308' }}>Энергия: {player.energy}⚡ | Статус: {totalStatus}⭐</p>
 
         <div style={{ display: 'flex', gap: '5px', marginBottom: '15px', background: '#111823', padding: '4px', borderRadius: '8px' }}>
           <button style={{ flex: 1, padding: '8px 4px', fontSize: '11px', background: activeTab === 'internet' ? '#1e2b38' : 'transparent', border: 'none', color: '#fff', borderRadius: '6px' }} onClick={() => setActiveTab('internet')}>🌐 В интернете</button>
           <button style={{ flex: 1, padding: '8px 4px', fontSize: '11px', background: activeTab === 'avito' ? '#1e2b38' : 'transparent', border: 'none', color: '#fff', borderRadius: '6px' }} onClick={() => setActiveTab('avito')}>📦 На Авито ({avitoJobs.length})</button>
-          <button style={{ flex: 1, padding: '8px 4px', fontSize: '11px', background: activeTab === 'apps' ? '#1e2b38' : 'transparent', border: 'none', color: '#fff', borderRadius: '6px' }} onClick={() => setActiveTab('apps')}>📱 Яндекс.Про</button>
+          <button style={{ flex: 1, padding: '8px 4px', fontSize: '11px', background: activeTab === 'apps' ? '#1e2b38' : 'transparent', border: 'none', color: '#fff', borderRadius: '6px' }} onClick={() => setActiveTab('apps')}>🛠 Проф. Работы</button>
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-          {activeTab === 'internet' && internetJobs.map((job, idx) => (
-            <div key={idx} style={{ display: 'flex', flexDirection: 'column', padding: '10px 14px', background: '#1e2b38', borderRadius: '8px', textAlign: 'left' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontSize: '14px', fontWeight: 'bold', color: '#fff' }}>{job.name}</span>
-                <button className="btn buy-btn" style={{ margin: 0, padding: '6px 12px', fontSize: '12px', background: '#4cb64c' }} onClick={() => handleWorkClick(job)}>⚡ -{job.energyCost}</button>
+          {activeTab === 'internet' && internetJobs.map((job, idx) => {
+            const hasStatus = totalStatus >= (job.reqStatus || 0);
+            const hasLicense = !job.reqLicense || currentLicenses.includes(job.reqLicense);
+            const isAvailable = hasStatus && hasLicense;
+
+            return (
+              <div key={idx} style={{ display: 'flex', flexDirection: 'column', padding: '10px 14px', background: '#1e2b38', borderRadius: '8px', textAlign: 'left', opacity: isAvailable ? 1 : 0.5 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontSize: '14px', fontWeight: 'bold', color: '#fff' }}>{job.name}</span>
+                  <button className="btn buy-btn" style={{ margin: 0, padding: '6px 12px', fontSize: '12px', background: isAvailable ? '#4cb64c' : '#2b3946' }} disabled={!isAvailable} onClick={() => handleWorkClick(job)}> Работать </button>
+                </div>
+                <p style={{ fontSize: '12px', color: '#ef4444', margin: '4px 0 2px 0' }}>⚡ Расход энергии: -{job.energyCost}</p>
+                <span style={{ fontSize: '12px', color: '#4cb64c', fontWeight: 'bold' }}>💰 Зарплата: +{job.salary}₽</span>
+                {!hasLicense && <span style={{ fontSize: '11px', color: '#ef4444' }}>🔒 Требуется: {job.reqLicense}</span>}
+                {!hasStatus && <span style={{ fontSize: '11px', color: '#ef4444' }}>🔒 Требуется статус: {job.reqStatus}⭐</span>}
               </div>
-              <p style={{ fontSize: '11px', color: '#708499', margin: '4px 0' }}>{job.desc}</p>
-              <span style={{ fontSize: '12px', color: '#4cb64c', fontWeight: 'bold' }}>💰 +{job.salaryMin}-{job.salaryMax}₽ (Нет налога)</span>
-            </div>
-          ))}
+            );
+          })}
 
           {activeTab === 'avito' && (
             <>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontSize: '11px', color: '#708499' }}>Разовые заказы</span>
+                <span style={{ fontSize: '11px', color: '#708499' }}>Разовые заказы (Обновляются сами)</span>
                 <button style={{ background: '#243447', border: 'none', color: '#38bdf8', fontSize: '11px', padding: '4px 8px', borderRadius: '4px' }} onClick={generateAvitoJobs}>🔄 Обновить</button>
               </div>
               {avitoJobs.length === 0 ? (
@@ -199,6 +199,7 @@ export function WorkScreen({ player, totalStatus, onWork, onBack }) {
                         <button className="btn buy-btn" style={{ margin: 0, padding: '6px 12px', fontSize: '12px', background: isReady ? '#eab308' : '#2b3946' }} disabled={!isReady} onClick={() => handleWorkClick(job, true, idx)}>Выполнить</button>
                       </div>
                       <p style={{ fontSize: '11px', color: '#708499', margin: '4px 0' }}>{job.desc}</p>
+                      <p style={{ fontSize: '12px', color: '#ef4444', margin: '0 0 2px 0' }}>⚡ Расход энергии: -{job.energyCost}</p>
                       <span style={{ fontSize: '12px', color: '#4cb64c', fontWeight: 'bold' }}>💰 +{job.salary}₽ | {job.tax > 0 ? '📊 Налог: 4%' : '🤫 Наличные'}</span>
                     </div>
                   );
@@ -208,7 +209,7 @@ export function WorkScreen({ player, totalStatus, onWork, onBack }) {
           )}
 
           {activeTab === 'apps' && officialAppsJobs.map((job, idx) => {
-            const hasStatus = totalStatus >= job.reqStatus;
+            const hasStatus = totalStatus >= (job.reqStatus || 0);
             const hasLicense = !job.reqLicense || currentLicenses.includes(job.reqLicense);
             const isAvailable = hasStatus && hasLicense;
             return (
@@ -217,8 +218,10 @@ export function WorkScreen({ player, totalStatus, onWork, onBack }) {
                   <span style={{ fontSize: '14px', fontWeight: 'bold', color: '#fff' }}>{job.name}</span>
                   <button className="btn buy-btn" style={{ margin: 0, padding: '6px 12px', fontSize: '12px', background: isAvailable ? '#0284c7' : '#2b3946' }} disabled={!isAvailable} onClick={() => handleWorkClick(job)}>Смена</button>
                 </div>
-                <p style={{ fontSize: '11px', color: '#708499', margin: '4px 0' }}>{job.desc}</p>
-                <span style={{ fontSize: '12px', color: '#4cb64c', fontWeight: 'bold' }}>💰 +{job.salary - Math.round(job.salary * job.tax)}₽ <span style={{ color: '#ef4444', fontSize: '11px' }}>(Налог 4% 📊)</span></span>
+                <p style={{ fontSize: '12px', color: '#ef4444', margin: '4px 0 2px 0' }}>⚡ Расход энергии: -{job.energyCost}</p>
+                <span style={{ fontSize: '12px', color: '#4cb64c', fontWeight: 'bold' }}>💰 +{job.salary}₽ {job.tax > 0 && <span style={{ color: '#ef4444', fontSize: '11px' }}>(Налог 4% 📊)</span>}</span>
+                {!hasLicense && <span style={{ fontSize: '11px', color: '#ef4444', marginTop: '4px', display: 'block' }}>🔒 Требуется образование: <b>{job.reqLicense}</b></span>}
+                {!hasStatus && <span style={{ fontSize: '11px', color: '#ef4444', marginTop: '2px', display: 'block' }}>🔒 Требуется статус: {job.reqStatus}⭐</span>}
               </div>
             );
           })}
@@ -250,10 +253,12 @@ export function StorySelectionScreen({ onSelect }) {
             </div>
             <p style={{ fontSize: '13px', color: '#aa99aa', lineHeight: '1.4', marginBottom: '12px' }}>{story.description}</p>
             <div style={{ fontSize: '13px', color: '#708499', marginBottom: '15px', background: '#18222f', padding: '8px', borderRadius: '6px' }}>
-              <li>Стартовый капитал: <span style={{ color: '#4cb64c', fontWeight: 'bold' }}>{story.startBalances.RUB?.toLocaleString()}₽ 💰</span></li>
-              <li>Одежда: <span style={{ color: '#38bdf8' }}>{story.startClothes}</span></li>
-              <li>Образование: <span style={{ color: '#a78bfa' }}>{story.educationText}</span></li>
-              <li>Начальный статус: <span style={{ color: '#facc15' }}>{story.startStatus}⭐</span></li>
+              <ul style={{ margin: 0, paddingLeft: '15px' }}>
+                <li>Стартовый капитал: <span style={{ color: '#4cb64c', fontWeight: 'bold' }}>{story.startBalances?.RUB?.toLocaleString()}₽ 💰</span></li>
+                <li>Одежда: <span style={{ color: '#38bdf8' }}>{story.startClothes}</span></li>
+                <li>Образование: <span style={{ color: '#a78bfa' }}>{story.educationText}</span></li>
+                <li>Начальный статус: <span style={{ color: '#facc15' }}>{story.startStatus}⭐</span></li>
+              </ul>
             </div>
             <button className="btn buy-btn" style={{ width: '100%', margin: 0, padding: '10px', background: '#4cb64c' }} onClick={() => onSelect(story)}>Начать сценарий 🚀</button>
           </div>
@@ -267,7 +272,7 @@ export function StorySelectionScreen({ onSelect }) {
 // 4. ЭСТЕТИЧНЫЙ ЭКРАН КУРСОВ И ОБУЧЕНИЯ
 // ==========================================
 export function EducationScreen({ player, currentStatus, onBuy, onBack }) {
-  const currentLicenses = player.inventory.licenses || [];
+  const currentLicenses = player.inventory?.licenses || [];
 
   return (
     <Twemoji options={{ className: 'twemoji' }}>
@@ -315,7 +320,6 @@ export function CatalogScreen({ title, items, currentMoney, currentStatus, type,
             const statusNotRequired = type === 'house' || type === 'business';
             const hasStatus = statusNotRequired || currentStatus >= (item.reqStatus || 0);
             
-            // Динамический текст кнопки: Снять (для аренды жилья) или Купить (для всего остального)
             let btnText = type === 'house' && item.isRent 
               ? `🔑 Снять: ${item.price?.toLocaleString()}₽` 
               : `🛒 ${item.price?.toLocaleString()}₽`;
@@ -329,7 +333,6 @@ export function CatalogScreen({ title, items, currentMoney, currentStatus, type,
             const perks = [];
             if (item.statusBoost) perks.push(`+${item.statusBoost}⭐`);
             
-            // Красивое разделение расходов: Аренда vs Коммуналка
             if (item.rentIncome) {
               if (type === 'house') {
                 const expenseType = item.isRent ? 'Аренда' : 'Коммуналка';
@@ -365,7 +368,7 @@ export function CatalogScreen({ title, items, currentMoney, currentStatus, type,
 }
 
 // ==========================================
-// 6. ЭКРАН ИГРОВОГО КАЗИНО (РАЗВЛЕЧЕНИЯ)
+// 6. ИСПРАВЛЕННЫЙ ЭКРАН КАЗИНО
 // ==========================================
 export function EntertainmentScreen({ player, setPlayer, onBack }) {
   const [bet, setBet] = useState(1000);
@@ -375,44 +378,68 @@ export function EntertainmentScreen({ player, setPlayer, onBack }) {
   const emojis = ['🍒', '🍋', '💎', '7️⃣'];
 
   const playSlots = () => {
-    if (player.balances.RUB < bet) return alert("Не хватает рублей для ставки!");
+    if ((player.balances?.RUB || 0) < bet) return alert("Не хватает рублей для ставки!");
 
-    const res1 = emojis[Math.floor(Math.random() * emojis.length)];
-    const res2 = emojis[Math.floor(Math.random() * emojis.length)];
-    const res3 = emojis[Math.floor(Math.random() * emojis.length)];
-    
-    setSlots([res1, res2, res3]);
+    const randomChance = Math.random() * 100;
+    let res1, res2, res3;
+    let prize = 0;
+    let message = '';
 
-    setPlayer(prev => {
-      let prize = 0;
-      let message = '';
-
+    // ШАНС ПРЕЖДЕ БЫЛ 40%, ТЕПЕРЬ СРЕЗАН ДО 15%
+    if (randomChance <= 15) {
+      // Редкая победа (15% шанс)
+      const winEmoji = emojis[Math.floor(Math.random() * emojis.length)];
+      res1 = res2 = res3 = winEmoji;
+      
+      // Повысили множитель до x4, чтобы компенсировать сложность, но за счет 85% проигрышей казино уходит в плюс
+      prize = bet * 4; 
+      message = `🎉 КРУПНЫЙ ВЫИГРЫШ! Вы забрали ${(prize - bet)?.toLocaleString()}₽!`;
+    } else {
+      // Стандартный проигрыш (85% шанс)
+      res1 = emojis[Math.floor(Math.random() * emojis.length)];
+      res2 = emojis[Math.floor(Math.random() * emojis.length)];
+      res3 = emojis[Math.floor(Math.random() * emojis.length)];
+      
+      // Защита от случайного совпадения при проигрыше
       if (res1 === res2 && res2 === res3) {
-        prize = bet * 5;
-        message = `🎉 ДЖЕКПОТ! Вы выиграли ${prize?.toLocaleString()}₽!`;
-      } else if (res1 === res2 || res2 === res3 || res1 === res3) {
-        prize = Math.floor(bet * 1.5);
-        message = `💵 Неплохо! Пара совпала, выигрыш: ${prize?.toLocaleString()}₽`;
-      } else {
-        prize = -bet;
-        message = `😢 Увы, пусто... Минус ${bet?.toLocaleString()}₽`;
+        res1 = emojis[(emojis.indexOf(res1) + 1) % emojis.length];
       }
 
-      setStatusMessage(message);
+      prize = 0;
+      message = `😢 Увы, мимо... Автомат забирает ${bet?.toLocaleString()}₽`;
+    }
+
+    // Сначала обновляем локальный стейт визуала
+    setSlots([res1, res2, res3]);
+    setStatusMessage(message);
+
+    // Безопасно обновляем баланс
+    setPlayer(prev => {
+      const currentRUB = prev.balances?.RUB || 0;
+      const totalLost = prev.stats?.lostCasino || 0;
+      const totalEarned = prev.stats?.earnedCasino || 0;
 
       return {
         ...prev,
         balances: {
           ...prev.balances,
-          RUB: Math.max(0, prev.balances.RUB + (prize > 0 ? (prize - bet) : -bet))
+          RUB: Math.max(0, currentRUB - bet + prize)
+        },
+        stats: {
+          ...prev.stats,
+          // Аккуратно пишем статистику для функции shareProgress
+          lostCasino: prize === 0 ? totalLost + bet : totalLost,
+          earnedCasino: prize > 0 ? totalEarned + (prize - bet) : totalEarned
         }
       };
     });
   };
 
+  // Далее идет ваш JSX (кнопки ставок и "ДЁРНУТЬ РЫЧАГ"), он остается прежним
+
   return (
     <Twemoji options={{ className: 'twemoji' }}>
-      <div className="menu-screen">
+      <div className="menu-screen" style={{ maxWidth: '480px', margin: '0 auto' }}>
         <h3>🎰 Казино "Вулкан Милены"</h3>
         
         <div style={{ background: '#111827', padding: '20px', borderRadius: '12px', textAlign: 'center', marginBottom: '15px', border: '2px solid #a855f7' }}>
