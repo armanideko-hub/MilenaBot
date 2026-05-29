@@ -1,6 +1,6 @@
 import React from 'react';
 
-export function ShopMenu({ setMenuState, shareProgress }) {
+export function ShopMenu({ setMenuState }) {
   return (
     <div className="menu-screen">
       <h3>Магазины</h3>
@@ -9,7 +9,6 @@ export function ShopMenu({ setMenuState, shareProgress }) {
       <button className="btn" onClick={() => setMenuState('shop_houses')}>🏠 Недвижимость</button>
       <button className="btn" onClick={() => setMenuState('shop_biz')}>🚀 Стартапы</button>
       <button className="btn" onClick={() => setMenuState('main')}>↩️ В главное меню</button>
-      {/* Кнопку "Поделиться" можно добавить и сюда, если нужно */}
     </div>
   );
 }
@@ -19,16 +18,21 @@ export function MainMenu({ setMenuState, shareProgress }) {
     <div className="menu-screen">
       <h3>Главное меню</h3>
       <button className="btn" onClick={() => setMenuState('profile')}>👤 Профиль</button>
+      
       <button className="btn" onClick={() => setMenuState('work')}>💼 Работа</button>
       <button className="btn" onClick={() => setMenuState('education')}>🎓 Образование</button>
+      
+      {/* КНОПКА МЕХАНИКИ ПЕРЕЕЗДА */}
+      <button className="btn" style={{ background: '#2196f3', fontWeight: 'bold' }} onClick={() => setMenuState('city_selection')}>✈️ Вокзал & Переезд</button>
+
       <button className="btn" onClick={() => setMenuState('shop')}>🛒 Магазин</button>
       <button className="btn" onClick={() => setMenuState('buyout')}>🤝 Выкуп бизнеса</button>
       <button className="btn" onClick={() => setMenuState('exchange')}>💱 Обмен валюты</button>
       <button className="btn" onClick={() => setMenuState('bank')}>🏦 Банк и Кредиты</button>
       <button className="btn" style={{ background: '#a855f7' }} onClick={() => setMenuState('entertainment')}>🎰 Развлечения</button>
       
-      {/* Кнопка "Поделиться" теперь использует функцию из пропсов */}
-      <button className="btn" style={{ background: '#3b82f6', marginTop: '10px' }} onClick={shareProgress}>
+      {/* Кнопка "Поделиться" */}
+      <button className="btn" style={{ background: '#10b981', marginTop: '10px' }} onClick={shareProgress}>
         📊 Поделиться прогрессом
       </button>
     </div>

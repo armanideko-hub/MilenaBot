@@ -1,5 +1,6 @@
 import React from 'react';
-import { currencies } from '../data/currencies';
+import { currencies } from '../../data/currencies';
+import { formatMoney } from '../../data/currencies';
 
 export function ExchangeScreen({ exchangeAmount, setExchangeAmount, handleExchange, onBack }) {
   return (
