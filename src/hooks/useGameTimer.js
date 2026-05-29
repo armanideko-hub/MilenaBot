@@ -52,19 +52,37 @@ export function useGameTimer(player, setPlayer) {
         remainingRUB += bizIncome;
 
         const currentHourlyPayment = prev.hourlyPayment || 0;
-        remainingRUB -= currentHourlyPayment;
+        const debtCurrency = prev.debtCurrency || 'RUB';
         
-        let newDebt = prev.debt - Math.max(0, currentHourlyPayment - Math.floor(currentHourlyPayment * 0.1));
+        let newDebt = prev.debt;
         let nextHourlyPayment = currentHourlyPayment;
+        let updatedBalances = { ...prev.balances, RUB: Math.max(0, remainingRUB) };
 
-        if (newDebt <= 0) { 
-          newDebt = 0; 
-          nextHourlyPayment = 0; 
+        if (prev.debt > 0 && currentHourlyPayment > 0) {
+          let availableFunds = updatedBalances[debtCurrency] || 0;
+          let actualPayment = 0;
+
+          if (availableFunds >= currentHourlyPayment) {
+            actualPayment = currentHourlyPayment;
+          } else {
+            actualPayment = availableFunds;
+          }
+
+          updatedBalances[debtCurrency] -= actualPayment;
+
+          // Уменьшаем долг только на ту сумму, которую реально смогли списать, минус 10% как комиссия
+          const principalPayment = Math.max(0, actualPayment - Math.floor(currentHourlyPayment * 0.1));
+          newDebt = prev.debt - principalPayment;
+
+          if (newDebt <= 0) {
+            newDebt = 0;
+            nextHourlyPayment = 0;
+          }
         }
 
         return {
           ...prev,
-          balances: { ...prev.balances, RUB: Math.max(0, remainingRUB) },
+          balances: updatedBalances,
           inventory: { ...prev.inventory, houses: updatedHouses },
           debt: Math.max(0, newDebt),
           hourlyPayment: nextHourlyPayment,

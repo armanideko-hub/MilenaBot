@@ -185,7 +185,16 @@ export function useGameplayActions(player, setPlayer, currentCity, totalStatus, 
 
     const assetsStrings = allAssets.map(asset => typeof asset === 'object' && asset !== null ? asset.name || JSON.stringify(asset) : asset);
 
-    const text = `🏆 Мой прогресс в MilenaBot!\n🌍 Сложность мира: ${difficulty}\n📍 Локация: ${currentCity.name}\n\n💰 Текущий баланс:\n• Рубли: ${rub.toLocaleString()}₽${usd > 0 ? `\n• Доллары: $${usd.toLocaleString()}` : ''}${eur > 0 ? `\n• Евро: €${eur.toLocaleString()}` : ''}\n\n📈 Статистика доходов:\n• На работе: +${work.toLocaleString()}₽\n• На бизнесах: +${biz.toLocaleString()}₽\n• Выиграно в казино: +${casino.toLocaleString()}₽\n\n📉 Азартные потери:\n• Оставлено в казино: ${lost.toLocaleString()}₽\n\n🏠 Крупное имущество:\n${assetsStrings.length > 0 ? assetsStrings.map(asset => `• ${asset}`).join('\n') : '• Отсутствует ⛺'}`;
+    const assetCounts = assetsStrings.reduce((acc, name) => {
+      acc[name] = (acc[name] || 0) + 1;
+      return acc;
+    }, {});
+
+    const formattedAssets = Object.entries(assetCounts).map(([name, count]) => 
+      count > 1 ? `• ${name} (x${count})` : `• ${name}`
+    );
+
+    const text = `🏆 Мой прогресс в MilenaBot!\n🌍 Сложность мира: ${difficulty}\n📍 Локация: ${currentCity.name}\n\n💰 Текущий баланс:\n• Рубли: ${rub.toLocaleString()}₽${usd > 0 ? `\n• Доллары: $${usd.toLocaleString()}` : ''}${eur > 0 ? `\n• Евро: €${eur.toLocaleString()}` : ''}\n\n📈 Статистика доходов:\n• На работе: +${work.toLocaleString()}₽\n• На бизнесах: +${biz.toLocaleString()}₽\n• Выиграно в казино: +${casino.toLocaleString()}₽\n\n📉 Азартные потери:\n• Оставлено в казино: ${lost.toLocaleString()}₽\n\n🏠 Крупное имущество:\n${formattedAssets.length > 0 ? formattedAssets.join('\n') : '• Отсутствует ⛺'}`;
 
     if (window.Telegram?.WebApp) {
       const tg = window.Telegram.WebApp;
